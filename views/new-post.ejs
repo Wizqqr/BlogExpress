@@ -1,0 +1,23 @@
+<%- include('partials/header.ejs') %>
+<link rel="stylesheet" href="/styles/index.css">
+<body class="new-post-body">
+<div class="new-post-view">
+  <div class="new-post-text">
+    <h1>New Post</h1>
+    <% if (typeof error !== 'undefined') { %>
+        <p class="error-message"><%= error %></p>
+    <% } %>
+    <form method="POST" action="/posts" class="new-post-form" id="new-post-form">
+        <label for="title" class="form-label">Title:</label><br>
+        <input type="text" id="title" name="title" class="form-input"><br>
+        <label for="content" class="form-label">Content:</label><br>
+        <textarea id="content" name="content" class="form-textarea"></textarea><br>
+        <button type="submit" class="form-button">Create Post</button>
+    </form>
+    <a href="/" class="back-link">Back to Blog</a>
+  </div>
+</div>
+<script src="/scripts/animations.js"></script>
+<script src="/scripts/validation.js"></script>
+</body>
+<%- include('partials/footer.ejs') %>

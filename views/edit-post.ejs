@@ -1,0 +1,23 @@
+<%- include('partials/header.ejs') %>
+<link rel="stylesheet" href="/styles/edit-post.css">
+<link rel="stylesheet" href="/styles/animations.css">
+
+<body class="edit-post-body">
+<div class="edit-post-view animate-fade-in">
+  <div class="edit-post-text">
+    <h1>Edit Post</h1>
+    <form method="POST" action="/posts/<%= post.id %>?_method=PUT" class="edit-post-form">
+        <label for="title" class="form-label">Title:</label>
+        <input type="text" id="title" name="title" value="<%= post.title %>" class="form-input">
+        <label for="content" class="form-label">Content:</label>
+        <textarea id="content" name="content" class="form-textarea"><%= post.content %></textarea>
+        <button type="submit" class="form-button">Update Post</button>
+    </form>
+    <a href="/" class="back-link">Back to Blog</a>
+  </div>
+</div>
+<script src="/scripts/animations.js"></script>
+<script src="/scripts/validation.js"></script>
+
+</body>
+<%- include('partials/footer.ejs') %>

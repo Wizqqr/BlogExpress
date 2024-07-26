@@ -1,0 +1,56 @@
+<%- include('partials/header.ejs') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/styles/index.css">
+</head>
+<body class="mainBody">
+    <div class="mainView">
+        <div class="mainText">
+            <p class="mainTextFirstP">NEXT GENERATION PLATFORM</p>
+            <h1>Artificial intelligence <br>& Syber security</h1>
+            <p class="mainTextSecondP">Lorem ipsum is placeholder text commonly used in the graphic,<br> print, and publishing industries for previewing layouts and<br> visual mockups.</p>
+            <div class="mainButtons">
+                <button class="firstBtn">
+                    Get started
+                </button>
+                <button class="secondBtn">
+                    Watch Video
+                </button>
+            </div>
+        </div>
+        <div class="mainImage">
+            <img src="../img/1.png" alt="1">
+        </div>
+    </div>
+    <div class="mainComment">
+        <div class="mainCommentText">
+            <h1>Do you want create some comment?</h1>
+            <button><a href="/posts/new">New Post</a></button>
+        </div>
+        <div class="mainCommentComments">
+            <% if(posts.length > 0){ %>
+                <% posts.forEach(post => { %>
+                    <div class="comment-container">
+                    <div class="comment">
+                        <h2><%= post.title %></h2>
+                        <p><%= post.content %></p>
+                        <form method="POST" action="/posts/<%= post.id %>?_method=DELETE">
+                            <button type="submit">Delete</button>
+                        </form>
+                        <a href="/posts/<%= post.id %>/edit">Edit</a>
+                    </div>
+                </div>
+               <% }) %>
+           <% } else { %>
+            <h1 class="NoComments">Постов нету.</h1>
+           <% }%>
+        </div>
+    </div>
+    <script src="/js/styles.js"></script>
+</body>
+</html>
+<%- include('partials/footer.ejs') %>
