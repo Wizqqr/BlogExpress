@@ -1,98 +1,109 @@
 import express from "express";
 import bodyParser from "body-parser";
 import methodOverride from "method-override";
-import fs from "fs";
+import pgPromise from "pg-promise";
 
 const app = express();
 const port = 3000;
+
+const pgp = pgPromise();
+const db = pgp({
+    user: "postgres",
+    host: "localhost",
+    database: "world",
+    password: "Aziret7bklassAfisha",
+    port: 5432,
+});
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
-let posts = [];
+db.none(`CREATE TABLE IF NOT EXISTS posts (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL
+);`).catch(error => {
+    console.error("Error creating posts table:", error);
+});
 
-function loadPosts() {
+app.get("/", async (req, res) => {
     try {
-        const data = fs.readFileSync('posts.json', 'utf8');
-        if (data.trim()) {
-            posts = JSON.parse(data);
-        } else {
-            posts = [];
-        }
+        const posts = await db.any("SELECT * FROM posts ORDER BY id ASC");
+        res.render("index.ejs", { posts });
     } catch (error) {
-        if (error.code === 'ENOENT') {
-            posts = [];
-        } else {
-            console.error("Error reading posts file:", error);
-            posts = [];
-        }
+        console.error("Error fetching posts:", error);
+        res.status(500).send("Internal Server Error");
     }
-}
-
-
-function savePosts() {
-    try {
-        fs.writeFileSync('posts.json', JSON.stringify(posts, null, 2));
-    } catch (error) {
-        console.error("Error writing posts file:", error);
-    }
-}
-
-loadPosts();
-
-app.get("/", (req, res) => {
-    res.render("index.ejs", { posts });
 });
 
 app.get("/posts/new", (req, res) => {
     res.render("new-post.ejs");
 });
 
-app.post("/posts", (req, res) => {
+app.post("/posts", async (req, res) => {
     const { title, content } = req.body;
-    
+
     if (!title.trim() || !content.trim()) {
         res.render("new-post.ejs", { error: "Both title and content are required to create a post." });
     } else {
-        const newPost = { id: posts.length + 1, title, content };
-        posts.push(newPost);
-        savePosts();
-        res.redirect("/");
+        try {
+            await db.none("INSERT INTO posts (title, content) VALUES ($1, $2)", [title, content]);
+            res.redirect("/");
+        } catch (error) {
+            console.error("Error creating post:", error);
+            res.status(500).send("Internal Server Error");
+        }
     }
 });
 
-app.get("/posts/:id/edit", (req, res) => {
+app.get("/posts/:id/edit", async (req, res) => {
     const { id } = req.params;
-    const post = posts.find((post) => post.id === parseInt(id));
-    if (!post) {
-        res.redirect("/");
-    } else {
-        res.render("edit-post.ejs", { post });
+    try {
+        const post = await db.oneOrNone("SELECT * FROM posts WHERE id = $1", [id]);
+        if (!post) {
+            res.redirect("/");
+        } else {
+            res.render("edit-post.ejs", { post });
+        }
+    } catch (error) {
+        console.error("Error fetching post:", error);
+        res.status(500).send("Internal Server Error");
     }
 });
 
-app.put("/posts/:id", (req, res) => {
+app.put("/posts/:id", async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
-    const index = posts.findIndex((post) => post.id === parseInt(id));
-    if (index === -1) {
+    try {
+        await db.none("UPDATE posts SET title = $1, content = $2 WHERE id = $3", [title, content, id]);
         res.redirect("/");
-    } else {
-        posts[index].title = title;
-        posts[index].content = content;
-        savePosts();
-        res.redirect("/");
+    } catch (error) {
+        console.error("Error updating post:", error);
+        res.status(500).send("Internal Server Error");
     }
 });
 
-app.delete("/posts/:id", (req, res) => {
+app.delete("/posts/:id", async (req, res) => {
     const { id } = req.params;
-    posts = posts.filter((post) => post.id !== parseInt(id));
-    savePosts();
-    res.redirect("/");
+    try {
+        await db.none("DELETE FROM posts WHERE id = $1", [id]);
+        res.redirect("/");
+    } catch (error) {
+        console.error("Error deleting post:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
-
+app.get("/search", async (req, res) => {
+    const { query } = req.query;
+    try {
+        const posts = await db.any("SELECT * FROM posts WHERE title ILIKE $1 OR content ILIKE $1", [`%${query}%`]);
+        res.render("index.ejs", { posts });
+    } catch (error) {
+        console.error("Error searching posts:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 app.listen(port, () => {
     console.log(`The server started on port ${port}`);
 });
