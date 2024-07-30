@@ -11,15 +11,11 @@
     <div class="mainView">
         <div class="mainText">
             <p class="mainTextFirstP">NEXT GENERATION PLATFORM</p>
-            <h1>Artificial intelligence <br>& Syber security</h1>
+            <h1>Artificial intelligence <br>& Cyber security</h1>
             <p class="mainTextSecondP">Lorem ipsum is placeholder text commonly used in the graphic,<br> print, and publishing industries for previewing layouts and<br> visual mockups.</p>
             <div class="mainButtons">
-                <button class="firstBtn">
-                    Get started
-                </button>
-                <button class="secondBtn">
-                    Watch Video
-                </button>
+                <button class="firstBtn">Get started</button>
+                <button class="secondBtn">Watch Video</button>
             </div>
         </div>
         <div class="mainImage">
@@ -28,30 +24,31 @@
     </div>
     <div class="mainComment">
         <div class="mainCommentText">
-            <h1>Do you want create some comment?</h1>
-            <button><a href="/posts/new">New Post</a></button>
-            <form action="/search" method="GET">
-                <input type="text" name="query" placeholder="Search posts...">
-                <button type="submit">Search</button>
-            </form>
+            <div class="mainCommentTextCreate">
+                <h1>Do you want to create some comment?</h1>
+                <button><a href="/posts/new">New Post</a></button>
+            </div>
+            <form class="searchForm" id="searchForm" method="GET" action="/search">
+                <input type="text" class="searchInput" name="query" placeholder="Search posts...">
+                <button type="submit" class="searchButton">Search</button>
+                
+            </form>        
         </div>
-        <div class="mainCommentComments">
+        <div class="mainCommentComments" id="commentsContainer">
             <% if(posts.length > 0){ %>
                 <% posts.forEach(post => { %>
-                    <div class="comment-container">
-                    <div class="comment">
-                        <h2><%= post.title %></h2>
-                        <p><%= post.content %></p>
-                        <form method="POST" action="/posts/<%= post.id %>?_method=DELETE">
-                            <button type="submit">Delete</button>
-                        </form>
-                        <a href="/posts/<%= post.id %>/edit">Edit</a>
+                    <div class="comment-container" data-id="<%= post.id %>">
+                        <div class="comment">
+                            <h2><%= post.title %></h2>
+                            <p><%= post.content %></p>
+                            <button class="delete-button">Delete</button>
+                            <a href="/posts/<%= post.id %>/edit">Edit</a>
+                        </div>
                     </div>
-                </div>
-               <% }) %>
-           <% } else { %>
-            <h1 class="NoComments">Постов нету.</h1>
-           <% }%>
+                <% }) %>
+            <% } else { %>
+                <h1 class="NoComments">Посты не найдены</h1>
+            <% } %>
         </div>
     </div>
     <script src="/js/styles.js"></script>

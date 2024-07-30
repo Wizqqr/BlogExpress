@@ -9,6 +9,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -50,17 +51,17 @@ body {
 }
 
 .mainCommentText {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     column-gap: 75px;
+    text-align: center;
 }
 
 .mainCommentText h1 {
     color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
-
+.mainComment{
+    flex-wrap: wrap;
+}
 .mainCommentText button {
     height: 55px;
     width: 150px;
@@ -79,14 +80,14 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     gap: 20px; /* Space between posts */
-    padding: 20px; /* Padding around the posts container */
+    padding: 20px; 
 }
 .comment-container {
     background-color: white;
-    height: 180px;
-    width: 300px;
+    height: 160px;
+    width: 250px;
     border-radius: 10px;
     padding: 20px;
     box-shadow: #333 saddlebrown;
@@ -239,4 +240,36 @@ body.new-post-body {
     50% { transform: translateX(5px); }
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
+}
+
+.searchInput{
+    height: 45px;
+    border-radius: 8px;
+    width: 200px;
+}
+
+@media only screen and (max-width: 768px){
+    .mainView h1{
+        font-size: 30px;
+    }
+    .mainImage img{
+        width: 400px;
+        height: 300px;
+    }
+    .mainCommentText{
+        column-gap: 0px;
+    }
+    .mainCommentText h1{
+        font-size: 20px;
+    }
+    .mainCommentText button{
+        width: 150px;
+        height: 50px;
+        margin-top: 10px;
+    }
+
+}
+.mainCommentTextCreate{
+    display: inline-flex;
+    column-gap: 20px;
 }

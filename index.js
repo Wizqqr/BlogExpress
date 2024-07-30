@@ -15,6 +15,7 @@ const db = pgp({
     port: 5432,
 });
 
+
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
@@ -96,8 +97,10 @@ app.delete("/posts/:id", async (req, res) => {
 });
 app.get("/search", async (req, res) => {
     const { query } = req.query;
+    console.log("Search query:", query); // Логируем запрос
     try {
         const posts = await db.any("SELECT * FROM posts WHERE title ILIKE $1 OR content ILIKE $1", [`%${query}%`]);
+        console.log("Posts found:", posts); // Логируем найденные записи
         res.render("index.ejs", { posts });
     } catch (error) {
         console.error("Error searching posts:", error);
